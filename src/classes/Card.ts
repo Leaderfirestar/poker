@@ -1,5 +1,3 @@
-class Card {
+export class Card {
 	constructor() { }
 }
-
-export default Card;

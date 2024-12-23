@@ -1,5 +1,3 @@
-class ActionLog {
+export class ActionLog {
 	constructor() { }
 }
-
-export default ActionLog;

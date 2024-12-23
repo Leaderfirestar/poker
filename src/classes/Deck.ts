@@ -1,5 +1,3 @@
-class Deck {
+export class Deck {
 	constructor() { }
 }
-
-export default Deck;

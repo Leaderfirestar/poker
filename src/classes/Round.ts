@@ -1,5 +1,3 @@
-class Round {
+export class Round {
 	constructor() { }
 }
-
-export default Round;

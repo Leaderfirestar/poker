@@ -1,5 +1,3 @@
-class Pot {
+export class Pot {
 	constructor() { }
 }
-
-export default Pot;
