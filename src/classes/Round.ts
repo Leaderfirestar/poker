@@ -1,6 +1,7 @@
 import { Pot } from "./Pot";
 
 export class Round {
+	/**	The current bet for the round */
 	private currentBet: number;
 	/**	Value of chips in the pot */
 	private pot: Pot;
