@@ -9,15 +9,12 @@ export class Game {
 	deck: Deck;
 	/**	The players playing the game */
 	players: Player[];
-	/**	Value of chips in the pot */
-	pot: number;
 	/**	The cards in the river */
 	river: Card[];
 	constructor() {
 		this.dealerIndex = 0;
 		this.deck = new Deck();
 		this.players = [];
-		this.pot = 0;
 		this.river = [];
 	}
 }
