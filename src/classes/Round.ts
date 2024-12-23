@@ -1,9 +1,11 @@
+import { Pot } from "./Pot";
+
 export class Round {
-	currentBet: number;
+	private currentBet: number;
 	/**	Value of chips in the pot */
-	pot: number;
+	private pot: Pot;
 	constructor() {
 		this.currentBet = 0;
-		this.pot = 0;
+		this.pot = new Pot();
 	}
 }

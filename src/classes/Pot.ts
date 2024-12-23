@@ -1,3 +1,6 @@
 export class Pot {
-	constructor() { }
+	private value: number;
+	constructor() {
+		this.value = 0;
+	}
 }

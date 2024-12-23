@@ -4,13 +4,13 @@ import { Player } from "./Player";
 
 export class Game {
 	/**	Index for the players array to designate a dealer */
-	dealerIndex: number;
+	private dealerIndex: number;
 	/**	The deck we'll be using for the game */
-	deck: Deck;
+	private deck: Deck;
 	/**	The players playing the game */
-	players: Player[];
+	private players: Player[];
 	/**	The cards in the river */
-	river: Card[];
+	private river: Card[];
 	constructor() {
 		this.dealerIndex = 0;
 		this.deck = new Deck();
