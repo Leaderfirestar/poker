@@ -1,5 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { Card } from "./Card";
+import { GameSettings } from "./GameSettings";
 
 export class Player {
 	private id: string = uuid();
@@ -14,11 +15,15 @@ export class Player {
 	/**	Player's username */
 	private username: string;
 
-	constructor() {
-		this.chips = 0;
+	constructor(input: PlayerInput) {
+		this.chips = input.gameSettings.getStartingChips();
 		this.folded = false;
 		this.hand = [];
 		this.username = "";
 		this.dealer = false;
 	}
+}
+
+interface PlayerInput {
+	gameSettings: GameSettings;
 }
