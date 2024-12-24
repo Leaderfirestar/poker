@@ -4,4 +4,8 @@ export class GameSettings {
 	constructor() {
 		this.startingBlind = 5;
 	}
+
+	getStartingBlind() {
+		return this.startingBlind;
+	}
 }
