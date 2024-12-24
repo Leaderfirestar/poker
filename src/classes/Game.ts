@@ -1,3 +1,4 @@
+import { GameSettings } from "./GameSettings";
 import { Player } from "./Player";
 import { Table } from "./Table";
 
@@ -8,8 +9,13 @@ export class Game {
 	private players: Player[];
 	/**	The table object. Tracks play and whatnot */
 	private table: Table;
-	constructor() {
-		this.players = [];
+	constructor(input: GameInput) {
+		this.players = input.players;
 		this.table = new Table();
 	}
+}
+
+interface GameInput {
+	players: Player[];
+	settings: GameSettings;
 }
