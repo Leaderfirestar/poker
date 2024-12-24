@@ -3,8 +3,8 @@ import { Card } from "./Card";
 
 export class Player {
 	private id: string = uuid();
-	/** Chip denomination to the number of chips of that denomination */
-	private chips: Map<number, number>;
+	/** Number of chips the user has */
+	private chips: number;
 	/**	Whether or not this player is the dealer */
 	private dealer: boolean;
 	/**	Whether or not this player has folded */
@@ -15,7 +15,7 @@ export class Player {
 	private username: string;
 
 	constructor() {
-		this.chips = new Map();
+		this.chips = 0;
 		this.folded = false;
 		this.hand = [];
 		this.username = "";

@@ -1,6 +1,7 @@
 export class GameSettings {
-	private initialBlind: number;
+	/**	The initial blind to be used in the game */
+	private startingBlind: number;
 	constructor() {
-		this.initialBlind = 5;
+		this.startingBlind = 5;
 	}
 }

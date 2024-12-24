@@ -14,11 +14,15 @@ export class Table {
 	private round: Round;
 	/**	Players currently at the table */
 	private seats: Player[];
-	constructor() {
+	constructor(input: TableInput) {
 		this.dealerIndex = 0;
 		this.deck = new Deck();
 		this.river = [];
-		this.round = new Round();
+		this.round = new Round({ players: input.players });
 		this.seats = [];
 	}
+}
+
+interface TableInput {
+	players: Player[];
 }
