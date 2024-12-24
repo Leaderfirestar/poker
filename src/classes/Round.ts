@@ -12,12 +12,11 @@ export class Round {
 	/**	The value of the small blind */
 	private smallBlind: number;
 	/**	The current stage of the round */
-	private stage: Stage;
+	private stage: Stage = "pre-flop";
 	constructor() {
 		this.bigBlind = 0;
 		this.currentBet = 0;
 		this.pot = new Pot();
 		this.smallBlind = 0;
-		this.stage = "pre-flop";
 	}
 }
