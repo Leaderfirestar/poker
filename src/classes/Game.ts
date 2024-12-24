@@ -7,10 +7,13 @@ export class Game {
 	private roundNumber: number = 1;
 	/**	The players playing the game */
 	private players: Player[];
+	/**	The game's settings */
+	private settings: GameSettings;
 	/**	The table object. Tracks play and whatnot */
 	private table: Table;
 	constructor(input: GameInput) {
 		this.players = input.players;
+		this.settings = input.settings;
 		this.table = new Table();
 	}
 }
