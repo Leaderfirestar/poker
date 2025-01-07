@@ -16,6 +16,15 @@ export class Deck {
 	}
 
 	/**
+	 * Gives a card from the top of the deck
+	 * @returns First card off the top
+	 */
+	dealCard() {
+		const card = this.cards.shift();
+		return card;
+	}
+
+	/**
 	 * Shuffles the deck of cards using the Durstenfeld variation of the Fisher-Yates shuffle algorithm.
 	 * 
 	 * This algorithm ensures an unbiased random shuffle by iterating through the array
