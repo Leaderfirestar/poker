@@ -40,6 +40,6 @@ export class PotManager {
 	}
 
 	private calculateMaxContribution(pot: Pot): number {
-		return Math.min(...pot.getEligiblePlayers().map((p) => p.getChips()));
+		return Math.min(...pot.getEligiblePlayers().map((p) => p.getTotalChips()));
 	}
 }
