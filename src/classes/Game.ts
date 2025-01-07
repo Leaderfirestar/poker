@@ -14,7 +14,7 @@ export class Game {
 	constructor(input: GameInput) {
 		this.players = input.players;
 		this.settings = input.settings;
-		this.table = new Table({ players: input.players });
+		this.table = new Table({ players: input.players, settings: input.settings });
 	}
 }
 
