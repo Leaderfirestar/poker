@@ -12,6 +12,14 @@ export class Card {
 		this.suit = input.suit;
 		this.value = input.value;
 	}
+
+	flip() {
+		this.flipped = true;
+	}
+
+	isFlipped() {
+		return this.flipped;
+	}
 }
 
 interface CardInput {
