@@ -12,6 +12,8 @@ export class Player {
 	private folded: boolean;
 	/**	The array of cards the player has */
 	private hand: Card[];
+	/**	Whether or not a this player is all in */
+	private allIn: boolean = false;
 	/**	Player's username */
 	private username: string;
 
@@ -53,6 +55,14 @@ export class Player {
 	}
 
 	/**
+	 * Get's the player's username
+	 * @returns The player's username
+	 */
+	getName() {
+		return this.username;
+	}
+
+	/**
 	 * Returns the number of chips the player has
 	 * @returns The number of chips the player has
 	 */
@@ -61,14 +71,72 @@ export class Player {
 	}
 
 	/**
-	 * Get's the player's username
-	 * @returns The player's username
+	 * Returns if this player is all in or not
+	 * @returns Wheter or not this player is all in
 	 */
-	getName() {
-		return this.username;
+	isAllIn() {
+		return this.allIn;
+	}
+
+	/**
+	 * Returns whether or not the player is all in
+	 * @returns Whether or not this player is all-in
+	 */
+	isFolded() {
+		return this.folded;
+	}
+
+	async placeBet(currentBet: number): Promise<number> {
+		if (this.allIn || this.folded) return -1;
+
+		const decision: BetDecision = { action: "check" };
+
+		switch (decision.action) {
+			case "fold": {
+				this.folded = true;
+				return -1;
+			}
+			case "call": {
+				const callAmount = Math.min(currentBet, this.chips);
+				this.chips -= callAmount;
+				if (this.chips === 0) this.allIn = true;
+				return callAmount;
+			}
+			case "raise": {
+				const raiseAmount = Math.min(decision.amount, this.chips);
+				this.chips -= raiseAmount;
+				if (this.chips === 0) this.allIn = true;
+				return raiseAmount;
+			}
+			case "check": {
+				return 0;
+			}
+			default: {
+				throw new Error("Invalid betting action.");
+			}
+		}
 	}
 }
 
 interface PlayerInput {
 	gameSettings: GameSettings;
 }
+
+interface CallDecision {
+	action: "call";
+}
+
+interface CheckDecision {
+	action: "check";
+}
+
+interface FoldDecision {
+	action: "fold";
+}
+
+interface RaiseDecision {
+	action: "raise";
+	amount: number;
+}
+
+type BetDecision = CallDecision | CheckDecision | FoldDecision | RaiseDecision;
