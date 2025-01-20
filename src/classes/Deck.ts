@@ -1,4 +1,4 @@
-import { Card, cardValues, suits } from "./Card";
+import { Card, cardDetails, suits } from "./Card";
 
 export class Deck {
 	/**	The cards in the deck */
@@ -6,8 +6,8 @@ export class Deck {
 	constructor() {
 		const initialCards: Card[] = [];
 		for (const suit of suits) {
-			for (const value of cardValues) {
-				const card = new Card({ suit, value });
+			for (const cardDetail of cardDetails) {
+				const card = new Card({ suit, text: cardDetail.text, value: cardDetail.value });
 				initialCards.push(card);
 			}
 		}
