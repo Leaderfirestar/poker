@@ -68,13 +68,60 @@ export class Table {
 		return Math.ceil(this.blind / 2);
 	}
 
+	private prepareRiver() {
+		for (let i = 0; i < 5; i++) {
+			const dealtCard = this.deck.dealCard();
+			if (dealtCard) this.river.push(dealtCard);
+		}
+	}
+
+	private flipRiver(number: number) {
+		if (number > 0 && number <= this.river.length) {
+			let count = 0;
+			for (let i = 0; i < number; i++) {
+				if (!this.river[i].isFlipped()) {
+					this.river[i].flip();
+					count++;
+					if (count === number) return;
+				}
+			}
+		}
+	}
+
 	private rotateDealer() {
 		this.dealerIndex = this.dealerIndex > this.seats.length - 1 ? 0 : this.dealerIndex + 1;
 	}
 
-	startRound() {
-		// this.round = new Round(this);
-		// this.dealCards();
+	private getActivePlayers() {
+		return this.round;
+	}
+
+	async playRound() {
+		this.dealCards();
+		this.prepareRiver();
+		this.round.collectBlinds();
+		const cardsToFlipPerStage = [
+			0, // Pre-flop
+			3, // flop
+			1, // turn
+			1, // river
+			0 // showdown
+		];
+		// Pre-flop
+		for (const cardCount of cardsToFlipPerStage) {
+			const continuePlay = await this.processPhase(cardCount);
+			if (!continuePlay) break;
+		}
+
+		this.round.determineWinner();
+	}
+
+	private async processPhase(cardsToFlip: number) {
+		if (cardsToFlip > 0) {
+			this.flipRiver(cardsToFlip);
+		}
+		await this.round.startBettingCycle();
+		return this.round.getRemainingPlayers().length > 1;
 	}
 }
 
