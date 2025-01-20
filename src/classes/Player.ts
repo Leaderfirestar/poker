@@ -54,6 +54,10 @@ export class Player {
 		this.hand.push(card);
 	}
 
+	getHand() {
+		return this.hand;
+	}
+
 	/**
 	 * Get's the player's username
 	 * @returns The player's username
