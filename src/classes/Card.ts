@@ -25,6 +25,10 @@ export class Card {
 		this.flipped = true;
 	}
 
+	getValue() {
+		return this.value;
+	}
+
 	isFlipped() {
 		return this.flipped;
 	}
@@ -40,54 +44,54 @@ export const suits: Suit[] = ["Club", "Diamond", "Heart", "Spade"];
 export const cardDetails: CardDetail[] = [
 	{
 		text: "2",
-		value: 0
-	},
-	{
-		text: "3",
-		value: 1
-	},
-	{
-		text: "4",
 		value: 2
 	},
 	{
-		text: "5",
+		text: "3",
 		value: 3
 	},
 	{
-		text: "6",
+		text: "4",
 		value: 4
 	},
 	{
-		text: "7",
+		text: "5",
 		value: 5
 	},
 	{
-		text: "8",
+		text: "6",
 		value: 6
 	},
 	{
-		text: "9",
+		text: "7",
 		value: 7
 	},
 	{
-		text: "10",
+		text: "8",
 		value: 8
 	},
 	{
-		text: "J",
+		text: "9",
 		value: 9
 	},
 	{
-		text: "Q",
+		text: "10",
 		value: 10
 	},
 	{
-		text: "K",
+		text: "J",
 		value: 11
 	},
 	{
-		text: "A",
+		text: "Q",
 		value: 12
+	},
+	{
+		text: "K",
+		value: 13
+	},
+	{
+		text: "A",
+		value: 14
 	}
 ];
