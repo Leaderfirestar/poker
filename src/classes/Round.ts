@@ -1,3 +1,5 @@
+import { Card } from "./Card";
+import { HandEvaluator } from "./HandEvaluator";
 import { Player } from "./Player";
 import { PotManager } from "./PotManager";
 
@@ -63,13 +65,15 @@ export class Round {
 		}
 	}
 
-	determineWinner() {
+	determineWinner(river: Card[]) {
 		const remainingPlayers = this.getRemainingPlayers();
 		if (remainingPlayers.length === 1) {
 			// 1 player, they win!!
 			this.potManager.distributeWinnings(remainingPlayers);
 		} else {
 			// calculate the winner
+			const sortedCommunityCards = river.toSorted((a, b) => a.getValue() - b.getValue());
+			HandEvaluator.determineWinners(remainingPlayers, sortedCommunityCards);
 		}
 	}
 }
