@@ -39,6 +39,39 @@ export class Round {
 			this.potManager.addContribution(smallBlind, smallBlindAmount);
 		}
 	}
+
+	getRemainingPlayers() {
+		return this.players.filter((player) => !player.isFolded());
+	}
+
+	async startBettingCycle(): Promise<void> {
+		let allMatched = false;
+		while (!allMatched) {
+			allMatched = true;
+			for (const player of this.players) {
+				if (!player || player.isAllIn() || player.isFolded()) continue;
+
+				const betAmount = await player.placeBet(this.currentBet);
+				if (betAmount === -1) continue;
+				if (betAmount > this.currentBet) {
+					this.currentBet = betAmount;
+					allMatched = false;
+				}
+
+				this.potManager.addContribution(player, betAmount);
+			}
+		}
+	}
+
+	determineWinner() {
+		const remainingPlayers = this.getRemainingPlayers();
+		if (remainingPlayers.length === 1) {
+			// 1 player, they win!!
+			this.potManager.distributeWinnings(remainingPlayers);
+		} else {
+			// calculate the winner
+		}
+	}
 }
 
 interface RoundInput {
