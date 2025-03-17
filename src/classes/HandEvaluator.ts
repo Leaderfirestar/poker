@@ -1,25 +1,43 @@
 import { Card, cardDetails } from "./Card";
-import { Player } from "./Player";
+
+interface Evaluation {
+	rank: number;
+	cards: Card[];
+}
 
 export class HandEvaluator {
-	static evaluateHand(playerCards: Card[], communityCards: Card[]) {
+	static evaluateHand(playerCards: Card[], communityCards: Card[]): Evaluation {
 		// Combine player's hole cards with community cards
 		const sortedCards = this.sortCards([...playerCards, ...communityCards]);
 		const handValue = this.getHandValue(sortedCards);
+		return {
+			rank: handValue,
+			cards: sortedCards.slice(0, 5),
+		};
 	}
 
 	private static sortCards(cards: Card[]) {
 		const sortedCards = cards.toSorted((a, b) => a.getValue() - b.getValue());
 		if (this.isNOfAKind(sortedCards, 4)) {
 			// 4 of a kind
+			const ordered = this.orderFourOfAKind(sortedCards);
+			if (ordered) return ordered;
 		} else if (this.isFullHouse(sortedCards)) {
 			// Full house
+			const ordered = this.orderFullHouse(sortedCards);
+			if (ordered) return ordered;
 		} else if (this.isNOfAKind(sortedCards, 3)) {
 			// Three of a kind
+			const ordered = this.orderThreeOfAKind(sortedCards);
+			if (ordered) return ordered;
 		} else if (this.isTwoPair(sortedCards)) {
 			// Two pair
+			const ordered = this.orderTwoPair(sortedCards);
+			if (ordered) return ordered;
 		} else if (this.isNOfAKind(sortedCards, 2)) {
 			// Pair
+			const ordered = this.orderPair(sortedCards);
+			if (ordered) return ordered;
 		}
 		return sortedCards;
 	}
@@ -145,18 +163,115 @@ export class HandEvaluator {
 		return pairs.length >= 2;
 	}
 
-	static determineWinners(players: Player[], communityCards: Card[]): Player[] {
-		// Map players to their evaluated hands
-		const playerScores = players.map(player => ({
-			player,
-			score: this.evaluateHand(player.getHand(), communityCards),
-		}));
+	/**
+	 * Given cards, creates a new array ordered with the 4 of a kind at the front, followed by the highest kicker
+	 * @author Eric Webb <ewebb@factorearth.com>
+	 * @param cards The cards we want to order
+	 * @returns A new array ordered with the 4 of a kind at the front
+	 */
+	private static orderFourOfAKind(cards: Card[]): Card[] | null {
+		const groups = this.groupByValue(cards);
+		for (const [value, group] of [...groups.entries()].sort((a, b) => b[0] - a[0])) {
+			if (group.length === 4) {
+				const kickers = cards.filter(c => c.getValue() !== value).sort((a, b) => b.getValue() - a.getValue());
+				return [...group, kickers[0]]; // 4 of a kind + highest kicker
+			}
+		}
+		return null;
+	}
 
-		// Find the highest score
-		const highestScore = Math.max(...playerScores.map(ps => ps.score.rank));
+	/**
+	 * Given cards, creates a new array ordered with the full house at the front
+	 * @author Eric Webb <ewebb@factorearth.com>
+	 * @param cards The cards we want to order
+	 * @returns A new array ordered with the full house at the front (3 of a kind + the pair)
+	 */
+	private static orderFullHouse(cards: Card[]): Card[] | null {
+		const groups = this.groupByValue(cards);
+		const trips = [...groups.entries()].filter(([_, g]) => g.length >= 3).sort((a, b) => b[0] - a[0]);
+		const pairs = [...groups.entries()].filter(([_, g]) => g.length >= 2).sort((a, b) => b[0] - a[0]);
 
-		// Filter players with the highest scores
-		return playerScores.filter(ps => ps.score.rank === highestScore).map(ps => ps.player);
+		for (const [tripVal, tripCards] of trips) {
+			for (const [pairVal, pairCards] of pairs) {
+				if (tripVal !== pairVal) {
+					return [...tripCards.slice(0, 3), ...pairCards.slice(0, 2)];
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Given cards, creates a new array with the 3 of a kind at the front, followed by the 2 highest kickers
+	 * @author Eric Webb <ewebb@factorearth.com>
+	 * @param cards The cards we want to order
+	 * @returns A new array with the 3 of a kind at the front, followed by the 2 highest kickers
+	 */
+	private static orderThreeOfAKind(cards: Card[]): Card[] | null {
+		const groups = this.groupByValue(cards);
+		const trips = [...groups.entries()].filter(([_, g]) => g.length >= 3).sort((a, b) => b[0] - a[0]);
+
+		if (trips.length) {
+			const trip = trips[0][1].slice(0, 3);
+			const kickers = cards.filter(c => c.getValue() !== trips[0][0]).sort((a, b) => b.getValue() - a.getValue()).slice(0, 2);
+			// Three of a kind + 2 highest kickers
+			return [...trip, ...kickers];
+		}
+		return null;
+	}
+
+	/**
+	 * Given cards, creates a new array with the 2 pairs at the front (highest first) followed by the highest kicker
+	 * @author Eric Webb <ewebb@factorearth.com>
+	 * @param cards The cards we want to order
+	 * @returns A new array with the 2 pairs at the front (highest first) followed by the highest kicker
+	 */
+	private static orderTwoPair(cards: Card[]): Card[] | null {
+		const groups = this.groupByValue(cards);
+		const pairs = [...groups.entries()].filter(([_, g]) => g.length >= 2).sort((a, b) => b[0] - a[0]);
+
+		if (pairs.length >= 2) {
+			const [highPair, lowPair] = [pairs[0][1].slice(0, 2), pairs[1][1].slice(0, 2)];
+			const kicker = cards.filter(c => c.getValue() !== pairs[0][0] && c.getValue() !== pairs[1][0])
+				.sort((a, b) => b.getValue() - a.getValue())[0];
+			return [...highPair, ...lowPair, kicker];
+		}
+		return null;
+	}
+
+	/**
+	 * Given cards, creates a new array with the pair at the front, followed by the 3 highest kickers
+	 * @author Eric Webb <ewebb@factorearth.com>
+	 * @param cards The cards we want to order
+	 * @returns A new array with the pair at the front, followed by the 3 highest kickers
+	 */
+	private static orderPair(cards: Card[]): Card[] | null {
+		const groups = this.groupByValue(cards);
+		const pairs = [...groups.entries()].filter(([_, g]) => g.length >= 2).sort((a, b) => b[0] - a[0]);
+
+		if (pairs.length) {
+			const pair = pairs[0][1].slice(0, 2);
+			const kickers = cards.filter(c => c.getValue() !== pairs[0][0]).sort((a, b) => b.getValue() - a.getValue()).slice(0, 3);
+			// Pair + 3 highest kickers
+			return [...pair, ...kickers];
+		}
+		return null;
+	}
+
+	/**
+	 * Given cards, groups them by value in a map and returns the map
+	 * @author Eric Webb <ewebb@factorearth.com>
+	 * @param cards The cards we want groups
+	 * @returns A map with the cards grouped by value
+	 */
+	private static groupByValue(cards: Card[]): Map<number, Card[]> {
+		const map = new Map<number, Card[]>();
+		for (const card of cards) {
+			const value = card.getValue();
+			if (!map.has(value)) map.set(value, []);
+			map.get(value)!.push(card);
+		}
+		return map;
 	}
 }
 
