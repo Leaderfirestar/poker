@@ -48,6 +48,12 @@ export class HandEvaluator {
 		return sortedCards;
 	}
 
+	/**
+	 * Given cards, returns an integer signifying the hand's value
+	 * @author Eric Webb <ewebb@factorearth.com>
+	 * @param cards The cards to evaluate
+	 * @returns The hand's value
+	 */
 	private static getHandValue(cards: Card[]) {
 		if (this.isRoyalFlush(cards)) return 9;
 		if (this.isStraightFlush(cards)) return 8;
@@ -280,6 +286,13 @@ export class HandEvaluator {
 		return map;
 	}
 
+	/**
+	 * Given the players and cards on the table, determines the winner(s) of the hand
+	 * @author Eric Webb <ewebb@factorearth.com>
+	 * @param players The players to evaluate
+	 * @param communityCards The cards on the table
+	 * @returns The winning player(s)
+	 */
 	static determineWinners(players: Player[], communityCards: Card[]): Player[] {
 		// Map players to their evaluated hands
 		const playerEvaluations: PlayerEvaluation[] = players.map(player => ({
@@ -318,6 +331,9 @@ export class HandEvaluator {
 
 	/**
 	 * Compare two hands of the same rank by highest cards.
+	 * @author Eric Webb <ewebb@factorearth.com>
+	 * @param handA The first hand to compare.
+	 * @param handB The second hand to compare.
 	 * @returns 1 if handA wins, -1 if handB wins, 0 if tie.
 	 */
 	private static compareHandsByCards(handA: Card[], handB: Card[]): number {
