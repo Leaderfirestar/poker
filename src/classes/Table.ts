@@ -39,7 +39,8 @@ export class Table {
 	}
 
 	endRound() {
-		// this.rotateDealer();
+		this.round.determineWinner(this.river);
+		this.rotateDealer();
 	}
 
 	/**
@@ -92,10 +93,6 @@ export class Table {
 		this.dealerIndex = this.dealerIndex > this.seats.length - 1 ? 0 : this.dealerIndex + 1;
 	}
 
-	private getActivePlayers() {
-		return this.round;
-	}
-
 	async playRound() {
 		this.dealCards();
 		this.prepareRiver();
@@ -113,7 +110,7 @@ export class Table {
 			if (!continuePlay) break;
 		}
 
-		this.round.determineWinner(this.river);
+		this.endRound();
 	}
 
 	private async processPhase(cardsToFlip: number) {
