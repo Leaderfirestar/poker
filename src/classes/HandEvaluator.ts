@@ -1,12 +1,18 @@
 import { Card, cardDetails } from "./Card";
+import { Player } from "./Player";
 
 interface Evaluation {
 	rank: number;
 	cards: Card[];
 }
 
+interface PlayerEvaluation {
+	player: Player;
+	evaluation: Evaluation;
+}
+
 export class HandEvaluator {
-	static evaluateHand(playerCards: Card[], communityCards: Card[]): Evaluation {
+	private static evaluateHand(playerCards: Card[], communityCards: Card[]): Evaluation {
 		// Combine player's hole cards with community cards
 		const sortedCards = this.sortCards([...playerCards, ...communityCards]);
 		const handValue = this.getHandValue(sortedCards);
@@ -272,6 +278,55 @@ export class HandEvaluator {
 			map.get(value)!.push(card);
 		}
 		return map;
+	}
+
+	static determineWinners(players: Player[], communityCards: Card[]): Player[] {
+		// Map players to their evaluated hands
+		const playerEvaluations: PlayerEvaluation[] = players.map(player => ({
+			player,
+			evaluation: this.evaluateHand(player.getHand(), communityCards),
+		}));
+
+		// Step 1: Find the highest evaluation
+		const highestScore = Math.max(...playerEvaluations.map(ps => ps.evaluation.rank));
+
+		// Step 2: Filter players with the highest scores
+		const highestEvaluations = playerEvaluations.filter(ps => ps.evaluation.rank === highestScore);
+
+		// Step 3: Find best hand among them (by card comparison)
+		let bestHands: PlayerEvaluation[] = [];
+
+		for (const playerEvaluation of highestEvaluations) {
+			if (bestHands.length === 0) {
+				bestHands.push(playerEvaluation);
+				continue;
+			}
+
+			const comparison = this.compareHandsByCards(playerEvaluation.evaluation.cards, bestHands[0].evaluation.cards);
+			if (comparison > 0) {
+				// Found better hand, replace current best
+				bestHands = [playerEvaluation];
+			} else if (comparison === 0) {
+				// Tie, add to best hands
+				bestHands.push(playerEvaluation);
+			}
+		}
+
+		// Step 4: Return winners (could be 1 or multiple in case of tie)
+		return bestHands.map(bh => bh.player);
+	}
+
+	/**
+	 * Compare two hands of the same rank by highest cards.
+	 * @returns 1 if handA wins, -1 if handB wins, 0 if tie.
+	 */
+	private static compareHandsByCards(handA: Card[], handB: Card[]): number {
+		for (let i = 0; i < Math.min(handA.length, handB.length); i++) {
+			const diff = handA[i].getValue() - handB[i].getValue();
+			if (diff > 0) return 1;
+			if (diff < 0) return -1;
+		}
+		return 0; // Tie
 	}
 }
 
