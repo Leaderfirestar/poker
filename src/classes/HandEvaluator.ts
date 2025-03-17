@@ -12,6 +12,14 @@ interface PlayerEvaluation {
 }
 
 export class HandEvaluator {
+
+	/**
+	 * Given the player's pocket cards and the community cards, evaluates the player's hand
+	 * @author Eric Webb <ewebb@factorearth.com>
+	 * @param playerCards The player's pocket cards
+	 * @param communityCards The cards on the table
+	 * @returns An evaluation of the player's hand (rank and the top 5 cards)
+	 */
 	private static evaluateHand(playerCards: Card[], communityCards: Card[]): Evaluation {
 		// Combine player's hole cards with community cards
 		const sortedCards = this.sortCards([...playerCards, ...communityCards]);
@@ -22,6 +30,12 @@ export class HandEvaluator {
 		};
 	}
 
+	/**
+	 * Given cards, sortes them and groups them by their rank
+	 * @author Eric Webb <ewebb@factorearth.com>
+	 * @param cards The cards we want sorted
+	 * @returns The sorted and grouped hand
+	 */
 	private static sortCards(cards: Card[]) {
 		const sortedCards = cards.toSorted((a, b) => a.getValue() - b.getValue());
 		if (this.isNOfAKind(sortedCards, 4)) {
