@@ -25,6 +25,10 @@ export class Card {
 		this.flipped = true;
 	}
 
+	getSuit() {
+		return this.suit;
+	}
+
 	getValue() {
 		return this.value;
 	}
