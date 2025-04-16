@@ -113,7 +113,7 @@ export class Table {
 			if (!continuePlay) break;
 		}
 
-		this.round.determineWinner(this.river);
+		this.round.determineAndPayWinners(this.river);
 	}
 
 	private async processPhase(cardsToFlip: number) {

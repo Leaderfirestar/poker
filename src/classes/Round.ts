@@ -65,7 +65,7 @@ export class Round {
 		}
 	}
 
-	determineWinner(river: Card[]) {
+	determineAndPayWinners(river: Card[]) {
 		const remainingPlayers = this.getRemainingPlayers();
 		if (remainingPlayers.length === 1) {
 			// 1 player, they win!!
@@ -73,7 +73,8 @@ export class Round {
 		} else {
 			// calculate the winner
 			const sortedCommunityCards = river.toSorted((a, b) => a.getValue() - b.getValue());
-			HandEvaluator.determineWinners(remainingPlayers, sortedCommunityCards);
+			const winners = HandEvaluator.determineWinners(remainingPlayers, sortedCommunityCards);
+			this.potManager.distributeWinnings(winners);
 		}
 	}
 }
