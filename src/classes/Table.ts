@@ -39,7 +39,8 @@ export class Table {
 	}
 
 	endRound() {
-		// this.rotateDealer();
+		this.round.determineWinner(this.river);
+		this.rotateDealer();
 	}
 
 	/**
@@ -90,10 +91,6 @@ export class Table {
 
 	private rotateDealer() {
 		this.dealerIndex = this.dealerIndex > this.seats.length - 1 ? 0 : this.dealerIndex + 1;
-	}
-
-	private getActivePlayers() {
-		return this.round;
 	}
 
 	async playRound() {
